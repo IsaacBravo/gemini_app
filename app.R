@@ -166,19 +166,27 @@ server <- function(input, output) {
   
   # Display the input text
   output$show_text <- renderText({
+    req(input$text)  # Ensure an text file is uploaded
+    
     if (!is.null(input$text)) input$text
   })
   
   # Display the input image
   output$show_image <- renderImage({
-    if (!is.null(input$image)) {
-      list(
-        src = input$image$datapath,
-        contentType = input$image$type,
-        width = "100%",
-        height = "auto"
-      )
+    req(input$image)  # Ensure an image file is uploaded
+    
+    # Check if file path exists to prevent errors
+    if (is.null(input$image$datapath) || !file.exists(input$image$datapath)) {
+      return(NULL)  # Return NULL if file path is invalid
     }
+    
+    # Display the image using the file path
+    list(
+      src = input$image$datapath,
+      contentType = input$image$type,
+      width = "100%",
+      height = "auto"
+    )
   }, deleteFile = FALSE)
   
   # Reactive expression to run analysis based on user input
