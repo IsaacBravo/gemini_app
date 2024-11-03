@@ -6,7 +6,7 @@ library(fontawesome)
 
 source("llm_prompt_function.R")
 
-api_key <- "AIzaSyBbNRNkBj_QpgaZ0fN4gNx58XwUQQ4ZYYI"
+api_key <- "GEMINI_API"
 
 # Establecer la clave API de gemini
 setAPI(api_key)
