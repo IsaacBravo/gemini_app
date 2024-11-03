@@ -12,7 +12,7 @@ ui <- fluidPage(
   titlePanel("Political Text Analysis with Gemini"),
   sidebarLayout(
     sidebarPanel(
-      textInput("text", "Enter Political Text:", ""),
+      textInput("text", "Enter Text:", ""),
       selectInput("type", "Select Analysis Type:", choices = list(
         "Sentiment Single" = "sentiment_single",
         "Sentiment Multiple" = "sentiment_multiple",
@@ -81,6 +81,28 @@ server <- function(input, output) {
     )
     output$result <- renderText({ result })
   })
+  
+  # Image Analysis using gemini_image
+  observeEvent(input$analyze_image, {
+    # Check if a file and prompt are provided
+    req(input$file)
+    req(input$prompt)
+    
+    # Display the uploaded image
+    output$image_output <- renderImage({
+      list(
+        src = input$file$datapath,
+        contentType = 'image/png',
+        alt = "Uploaded Image"
+      )
+    }, deleteFile = FALSE)
+    
+    # Call gemini_image with prompt and image path
+    output$image_text <- renderText({
+      gemini_image(input$prompt, input$file$datapath)
+    })
+  })
+  
 }
 
 # Run the Shiny app

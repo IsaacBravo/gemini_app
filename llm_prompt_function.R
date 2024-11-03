@@ -45,3 +45,37 @@ llm_prompt <- function(text, question = NULL, type = NULL, num_topics = NULL, nu
     return("Sorry, I can't answer your question at the moment.")
   })
 }
+
+
+llm_prompt_img <- function(image_path, type = NULL) {
+  # Define the prompt based on the type of task
+  prompt_img <- switch(type,
+                   caption_description = "Explain this image in one sentence.",
+                   entity_single = "Mention what is the main object in this image. Only provide the word of the object.",
+                   entity_multiple = "Mention what are the main objects in this image Only provide the word of each object, separated by comma.",
+                   arousal_level = "Detect the most predominant level of arousal of the image. The options can be high, low or neutral. Only provide the main level as an answer.",
+                   valence_level = "Detect the most predominant sentiment of the following image in one of the following options positive, negative or neutral. Only provide the main sentiment as an answer",
+                   color_caption = "Mention the main colors present in the image. Only provide the word of each color, separated by comma."
+  )
+  
+  # Call the Gemini model with the generated prompt
+  tryCatch({
+    answer <- gemini_image(image_path, prompt = prompt_img) # Assuming 'gemini' is a valid function to call the API
+    return(answer)
+  }, error = function(e) {
+    return("Sorry, I can't answer your question at the moment.")
+  })
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
