@@ -6,6 +6,12 @@ library(fontawesome)
 
 source("llm_prompt_function.R")
 
+api_key <- "AIzaSyBbNRNkBj_QpgaZ0fN4gNx58XwUQQ4ZYYI"
+
+# Establecer la clave API de gemini
+setAPI(api_key)
+
+
 # Define the UI
 ui <- page_sidebar(
   theme = bs_theme(

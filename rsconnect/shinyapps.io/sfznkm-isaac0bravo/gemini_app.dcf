@@ -1,0 +1,13 @@
+name: gemini_app
+title: gemini_app
+username: sfznkm-isaac0bravo
+account: sfznkm-isaac0bravo
+server: shinyapps.io
+hostUrl: https://api.shinyapps.io/v1
+appId: 13216169
+bundleId: 9308697
+url: https://sfznkm-isaac0bravo.shinyapps.io/gemini_app/
+version: 1
+asMultiple: FALSE
+asStatic: FALSE
+ignoredFiles: 2aplfkb8.png|README.html|README.md|testing.R
