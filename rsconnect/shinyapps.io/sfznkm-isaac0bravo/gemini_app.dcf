@@ -5,7 +5,7 @@ account: sfznkm-isaac0bravo
 server: shinyapps.io
 hostUrl: https://api.shinyapps.io/v1
 appId: 13216169
-bundleId: 9318549
+bundleId: 9319048
 url: https://sfznkm-isaac0bravo.shinyapps.io/gemini_app/
 version: 1
 asMultiple: FALSE

@@ -215,7 +215,64 @@ ui <- navbarPage(
                      )
                    )),
                    
-                   actionButton("generate_code", "Generate Code")
+                   actionButton("generate_code", "Generate Code"),
+                   br(),
+                   h6(strong("Try this example of news articles:")),
+                   actionButton("load_data", "Show Data Sample"),
+                   br(),
+                   # Analysis type selector for scaling up
+                   selectInput("scale_type_sample", "Select Analysis Type:", choices = list(
+                     "Sentiment Analysis" = list(
+                       "Sentiment Single" = "sentiment_single",
+                       "Sentiment Multiple" = "sentiment_multiple"
+                     ),
+                     "Irony Detection" = list(
+                       "Irony Single" = "irony_single",
+                       "Irony Multiple" = "irony_multiple"
+                     ),
+                     "Content Moderation" = list(
+                       "Hate Speech Single" = "hate_speech_single",
+                       "Hate Speech Multiple" = "hate_speech_multiple",
+                       "Offensive Language Single" = "offensive_lang_single",
+                       "Offensive Language Multiple" = "offensive_lang_multiple"
+                     ),
+                     "Emotion Analysis" = list(
+                       "Emotion Single" = "emotion_single",
+                       "Emotion Multiple" = "emotion_multiple"
+                     ),
+                     "Topic Analysis" = list(
+                       "Topic Top" = "topic_top",
+                       "Topic Multiple" = "topic_multiple",
+                       "Topic Custom" = "topic_custom"
+                     ),
+                     "Keyword Analysis" = list(
+                       "Keyword Single" = "keyword_single",
+                       "Keyword Multiple" = "keyword_multiple"
+                     ),
+                     "Other" = list(
+                       "Entities" = "entities",
+                       "Custom Task" = "question_task"
+                     )
+                   )),
+                   conditionalPanel(
+                     condition = "input.scale_type_sample == 'topic_multiple'",
+                     numericInput("num_topics", "Number of Topics:", min = 1, value = 3)
+                   ),
+                   conditionalPanel(
+                     condition = "input.scale_type_sample == 'keyword_multiple'",
+                     numericInput("num_keywords", "Number of Keywords:", min = 1, value = 3)
+                   ),
+                   conditionalPanel(
+                     condition = "input.scale_type_sample == 'topic_custom'",
+                     textInput("topic_list", "Enter Topics (comma-separated):")
+                   ),
+                   conditionalPanel(
+                     condition = "input.scale_type_sample == 'NULL'",
+                     textInput("question", "Custom Task Question:")
+                   ),
+                   
+                   br(),
+                   actionButton("run_analysis", "Run Analysis")
                  )
                ),
                
