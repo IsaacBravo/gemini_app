@@ -21,7 +21,7 @@ ui <- navbarPage(
                title = "Analysis Controls",
                width = 500,
                length = 500, 
-                              
+               
                card(
                  height = "800px",
                  padding = "20px",
@@ -157,7 +157,7 @@ ui <- navbarPage(
              )
            )
   ),
-
+  
   # New tab: Settings or Additional Information
   tabPanel("Scale-Up",
            fluidPage(
@@ -173,61 +173,44 @@ ui <- navbarPage(
                  card(
                    height = "800px",
                    padding = "20px",
-             
-                 # Analysis type selector for scaling up
-                 selectInput("scale_type", "Select Analysis Type:", choices = list(
-                   "Sentiment Analysis" = list(
-                     "Sentiment Single" = "sentiment_single",
-                     "Sentiment Multiple" = "sentiment_multiple"
-                   ),
-                   "Irony Detection" = list(
-                     "Irony Single" = "irony_single",
-                     "Irony Multiple" = "irony_multiple"
-                   ),
-                   "Content Moderation" = list(
-                     "Hate Speech Single" = "hate_speech_single",
-                     "Hate Speech Multiple" = "hate_speech_multiple",
-                     "Offensive Language Single" = "offensive_lang_single",
-                     "Offensive Language Multiple" = "offensive_lang_multiple"
-                   ),
-                   "Emotion Analysis" = list(
-                     "Emotion Single" = "emotion_single",
-                     "Emotion Multiple" = "emotion_multiple"
-                   ),
-                   "Topic Analysis" = list(
-                     "Topic Top" = "topic_top",
-                     "Topic Multiple" = "topic_multiple",
-                     "Topic Custom" = "topic_custom"
-                   ),
-                   "Keyword Analysis" = list(
-                     "Keyword Single" = "keyword_single",
-                     "Keyword Multiple" = "keyword_multiple"
-                   ),
-                   "Other" = list(
-                     "Entities" = "entities",
-                     "Custom Task" = NULL
-                   )
-                 )),
-                 
-                 # Options for additional parameters
-                 # conditionalPanel(
-                 #   condition = "input.scale_type == 'topic_multiple'",
-                 #   numericInput("scale_num_topics", "Number of Topics:", min = 1, value = 3)
-                 # ),
-                 # conditionalPanel(
-                 #   condition = "input.scale_type == 'keyword_multiple'",
-                 #   numericInput("scale_num_keywords", "Number of Keywords:", min = 1, value = 3)
-                 # ),
-                 # conditionalPanel(
-                 #   condition = "input.scale_type == 'topic_custom'",
-                 #   textInput("scale_topic_list", "Enter Topics (comma-separated):")
-                 # ),
-                 # conditionalPanel(
-                 #   condition = "input.scale_type == 'NULL'",
-                 #   textInput("scale_question", "Custom Task Question:")
-                 # ),
-                 actionButton("generate_code", "Generate Code")
-                )
+                   
+                   # Analysis type selector for scaling up
+                   selectInput("scale_type", "Select Analysis Type:", choices = list(
+                     "Sentiment Analysis" = list(
+                       "Sentiment Single" = "sentiment_single",
+                       "Sentiment Multiple" = "sentiment_multiple"
+                     ),
+                     "Irony Detection" = list(
+                       "Irony Single" = "irony_single",
+                       "Irony Multiple" = "irony_multiple"
+                     ),
+                     "Content Moderation" = list(
+                       "Hate Speech Single" = "hate_speech_single",
+                       "Hate Speech Multiple" = "hate_speech_multiple",
+                       "Offensive Language Single" = "offensive_lang_single",
+                       "Offensive Language Multiple" = "offensive_lang_multiple"
+                     ),
+                     "Emotion Analysis" = list(
+                       "Emotion Single" = "emotion_single",
+                       "Emotion Multiple" = "emotion_multiple"
+                     ),
+                     "Topic Analysis" = list(
+                       "Topic Top" = "topic_top",
+                       "Topic Multiple" = "topic_multiple",
+                       "Topic Custom" = "topic_custom"
+                     ),
+                     "Keyword Analysis" = list(
+                       "Keyword Single" = "keyword_single",
+                       "Keyword Multiple" = "keyword_multiple"
+                     ),
+                     "Other" = list(
+                       "Entities" = "entities",
+                       "Custom Task" = "question_task"
+                     )
+                   )),
+                   
+                   actionButton("generate_code", "Generate Code")
+                 )
                ),
                
                layout_column_wrap(
@@ -242,18 +225,18 @@ ui <- navbarPage(
                      # Display the code block with syntax highlighting
                      HTML("<pre style='margin: 0; font-size: 18px;
         line-height: 1.2;'><code class='language-javascript'>"),
-                     uiOutput("scale_code"),
-                     HTML("</code></pre>")
+        uiOutput("scale_code"),
+        HTML("</code></pre>")
                    )
-                  
-                  )
+        
+                 )
                )
-              )
+             )
            )
   ),
   
-
-    
+  
+  
   # New tab: Settings or Additional Information
   tabPanel("Settings",
            fluidPage(
@@ -431,7 +414,7 @@ server <- function(input, output) {
       }
       
       "
-  
+      
     } 
     else if (input$scale_type == "irony_single") {
       code_template <- "
@@ -659,7 +642,7 @@ server <- function(input, output) {
     } 
     else if (input$scale_type == "offensive_lang_multiple") {
       code_template <- "
-            # Example code for Offensive Language Detection Analysis on Large Dataset
+      # Example code for Offensive Language Detection Analysis on Large Dataset
     
       library(gemini.R)
       library(dplyr)
@@ -852,7 +835,7 @@ server <- function(input, output) {
       data <- readxl::read_excel('C:\\Users\\Desktop\\data.xlsx')
       
       # Run Sentiment Analysis
-      data_results <- apply(data, function(text) {llm_prompt(text = text, type = 'topic_multiple', num_topics = <WRITE HERE THE NUMBER OF TOPICS>)})
+      data_results <- apply(data, function(text) {llm_prompt(text = text, type = 'topic_multiple', num_topics = 'WRITE HERE THE NUMBER OF TOPICS')})
       
       # Note: Implementation llm_prompt function
       
@@ -896,7 +879,7 @@ server <- function(input, output) {
       data <- readxl::read_excel('C:\\Users\\Desktop\\data.xlsx')
       
       # Run Sentiment Analysis
-      data_results <- apply(data, function(text) {llm_prompt(text = text, type = 'topic_custom', topic_list = <WRITE HERE THE TOPIC NAMES>)})
+      data_results <- apply(data, function(text) {llm_prompt(text = text, type = 'topic_custom', topic_list = 'WRITE HERE THE TOPIC NAMES')})
       
       # Note: Implementation llm_prompt function
       
@@ -983,7 +966,7 @@ server <- function(input, output) {
       data <- readxl::read_excel('C:\\Users\\Desktop\\data.xlsx')
       
       # Run Sentiment Analysis
-      data_results <- apply(data, function(text) {llm_prompt(text = text, type = 'keyword_multiple', num_keywords = <WRITE HERE THE NUMBER OF KEYWORDS>)})
+      data_results <- apply(data, function(text) {llm_prompt(text = text, type = 'keyword_multiple', num_keywords = 'WRITE HERE THE NUMBER OF KEYWORDS')})
       
       # Note: Implementation llm_prompt function
       
@@ -1071,7 +1054,7 @@ server <- function(input, output) {
       data <- readxl::read_excel('C:\\Users\\Desktop\\data.xlsx')
       
       # Run Sentiment Analysis
-      data_results <- apply(data, function(text) {llm_prompt(text = text, type = 'question_task', question = <WRITE HERE YOUR QUESTION>)})
+      data_results <- apply(data, function(text) {llm_prompt(text = text, type = 'question_task', question = 'WRITE HERE YOUR QUESTION')})
       
       # Note: Implementation llm_prompt function
       
@@ -1110,6 +1093,7 @@ server <- function(input, output) {
     message("Settings saved: ", input$api_key)
   })
 }
+
 
 # Run the Shiny app
 shinyApp(ui = ui, server = server)
