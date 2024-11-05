@@ -211,27 +211,10 @@ ui <- navbarPage(
                      ),
                      "Other" = list(
                        "Entities" = "entities",
-                       "Custom Task" = NULL
+                       "Custom Task" = "question_task"
                      )
                    )),
                    
-                   # Options for additional parameters
-                   # conditionalPanel(
-                   #   condition = "input.scale_type == 'topic_multiple'",
-                   #   numericInput("scale_num_topics", "Number of Topics:", min = 1, value = 3)
-                   # ),
-                   # conditionalPanel(
-                   #   condition = "input.scale_type == 'keyword_multiple'",
-                   #   numericInput("scale_num_keywords", "Number of Keywords:", min = 1, value = 3)
-                   # ),
-                   # conditionalPanel(
-                   #   condition = "input.scale_type == 'topic_custom'",
-                   #   textInput("scale_topic_list", "Enter Topics (comma-separated):")
-                   # ),
-                   # conditionalPanel(
-                   #   condition = "input.scale_type == 'NULL'",
-                   #   textInput("scale_question", "Custom Task Question:")
-                   # ),
                    actionButton("generate_code", "Generate Code")
                  )
                ),
@@ -665,7 +648,7 @@ server <- function(input, output) {
     } 
     else if (input$scale_type == "offensive_lang_multiple") {
       code_template <- "
-            # Example code for Offensive Language Detection Analysis on Large Dataset
+      # Example code for Offensive Language Detection Analysis on Large Dataset
     
       library(gemini.R)
       library(dplyr)
@@ -858,7 +841,7 @@ server <- function(input, output) {
       data <- readxl::read_excel('C:\\Users\\Desktop\\data.xlsx')
       
       # Run Sentiment Analysis
-      data_results <- apply(data, function(text) {llm_prompt(text = text, type = 'topic_multiple', num_topics = <WRITE HERE THE NUMBER OF TOPICS>)})
+      data_results <- apply(data, function(text) {llm_prompt(text = text, type = 'topic_multiple', num_topics = 'WRITE HERE THE NUMBER OF TOPICS')})
       
       # Note: Implementation llm_prompt function
       
@@ -902,7 +885,7 @@ server <- function(input, output) {
       data <- readxl::read_excel('C:\\Users\\Desktop\\data.xlsx')
       
       # Run Sentiment Analysis
-      data_results <- apply(data, function(text) {llm_prompt(text = text, type = 'topic_custom', topic_list = <WRITE HERE THE TOPIC NAMES>)})
+      data_results <- apply(data, function(text) {llm_prompt(text = text, type = 'topic_custom', topic_list = 'WRITE HERE THE TOPIC NAMES')})
       
       # Note: Implementation llm_prompt function
       
@@ -989,7 +972,7 @@ server <- function(input, output) {
       data <- readxl::read_excel('C:\\Users\\Desktop\\data.xlsx')
       
       # Run Sentiment Analysis
-      data_results <- apply(data, function(text) {llm_prompt(text = text, type = 'keyword_multiple', num_keywords = <WRITE HERE THE NUMBER OF KEYWORDS>)})
+      data_results <- apply(data, function(text) {llm_prompt(text = text, type = 'keyword_multiple', num_keywords = 'WRITE HERE THE NUMBER OF KEYWORDS')})
       
       # Note: Implementation llm_prompt function
       
@@ -1077,7 +1060,7 @@ server <- function(input, output) {
       data <- readxl::read_excel('C:\\Users\\Desktop\\data.xlsx')
       
       # Run Sentiment Analysis
-      data_results <- apply(data, function(text) {llm_prompt(text = text, type = 'question_task', question = <WRITE HERE YOUR QUESTION>)})
+      data_results <- apply(data, function(text) {llm_prompt(text = text, type = 'question_task', question = 'WRITE HERE YOUR QUESTION')})
       
       # Note: Implementation llm_prompt function
       
