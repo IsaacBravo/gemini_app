@@ -210,22 +210,22 @@ ui <- navbarPage(
                  )),
                  
                  # Options for additional parameters
-                 conditionalPanel(
-                   condition = "input.scale_type == 'topic_multiple'",
-                   numericInput("scale_num_topics", "Number of Topics:", min = 1, value = 3)
-                 ),
-                 conditionalPanel(
-                   condition = "input.scale_type == 'keyword_multiple'",
-                   numericInput("scale_num_keywords", "Number of Keywords:", min = 1, value = 3)
-                 ),
-                 conditionalPanel(
-                   condition = "input.scale_type == 'topic_custom'",
-                   textInput("scale_topic_list", "Enter Topics (comma-separated):")
-                 ),
-                 conditionalPanel(
-                   condition = "input.scale_type == 'NULL'",
-                   textInput("scale_question", "Custom Task Question:")
-                 ),
+                 # conditionalPanel(
+                 #   condition = "input.scale_type == 'topic_multiple'",
+                 #   numericInput("scale_num_topics", "Number of Topics:", min = 1, value = 3)
+                 # ),
+                 # conditionalPanel(
+                 #   condition = "input.scale_type == 'keyword_multiple'",
+                 #   numericInput("scale_num_keywords", "Number of Keywords:", min = 1, value = 3)
+                 # ),
+                 # conditionalPanel(
+                 #   condition = "input.scale_type == 'topic_custom'",
+                 #   textInput("scale_topic_list", "Enter Topics (comma-separated):")
+                 # ),
+                 # conditionalPanel(
+                 #   condition = "input.scale_type == 'NULL'",
+                 #   textInput("scale_question", "Custom Task Question:")
+                 # ),
                  actionButton("generate_code", "Generate Code")
                 )
                ),
@@ -386,7 +386,8 @@ server <- function(input, output) {
       
       "
       
-    } else if (input$scale_type == "sentiment_multiple") {
+    } 
+    else if (input$scale_type == "sentiment_multiple") {
       code_template <- "
       # Example code for Sentiment Multiple Analysis on Large Dataset
     
@@ -431,7 +432,8 @@ server <- function(input, output) {
       
       "
   
-    } else if (input$scale_type == "irony_single") {
+    } 
+    else if (input$scale_type == "irony_single") {
       code_template <- "
       # Example code for Irony Detection Analysis on Large Dataset
     
@@ -450,7 +452,7 @@ server <- function(input, output) {
       data <- readxl::read_excel('C:\\Users\\Desktop\\data.xlsx')
       
       # Run Sentiment Analysis
-      data_results <- apply(data, function(text) {llm_prompt(text = text, type = 'sentiment_multiple')})
+      data_results <- apply(data, function(text) {llm_prompt(text = text, type = 'irony_single')})
       
       # Note: Implementation llm_prompt function
       
@@ -474,9 +476,10 @@ server <- function(input, output) {
       }      
       "
       
-    } else if (input$scale_type == "irony_multiple") {
+    } 
+    else if (input$scale_type == "irony_multiple") {
       code_template <- "
-      # Example code for Irony Detection Analysis on Large Dataset
+      # Example code for Multiple Irony Detection Analysis on Large Dataset
     
       library(gemini.R)
       library(dplyr)
@@ -493,7 +496,7 @@ server <- function(input, output) {
       data <- readxl::read_excel('C:\\Users\\Desktop\\data.xlsx')
       
       # Run Sentiment Analysis
-      data_results <- apply(data, function(text) {llm_prompt(text = text, type = 'sentiment_multiple')})
+      data_results <- apply(data, function(text) {llm_prompt(text = text, type = 'irony_multiple')})
       
       # Note: Implementation llm_prompt function
       
@@ -518,7 +521,8 @@ server <- function(input, output) {
       }        
       "
       
-    } else if (input$scale_type == "hate_speech_single") {
+    } 
+    else if (input$scale_type == "hate_speech_single") {
       code_template <- "
       # Example code for Hate Speech Detection Analysis on Large Dataset
     
@@ -537,7 +541,7 @@ server <- function(input, output) {
       data <- readxl::read_excel('C:\\Users\\Desktop\\data.xlsx')
       
       # Run Sentiment Analysis
-      data_results <- apply(data, function(text) {llm_prompt(text = text, type = 'sentiment_multiple')})
+      data_results <- apply(data, function(text) {llm_prompt(text = text, type = 'hate_speech_single')})
       
       # Note: Implementation llm_prompt function
       
@@ -562,7 +566,8 @@ server <- function(input, output) {
       
       "
       
-    } else if (input$scale_type == "hate_speech_multiple") {
+    } 
+    else if (input$scale_type == "hate_speech_multiple") {
       code_template <- "
       # Example code for Hate Speech Detection Analysis on Large Dataset
     
@@ -581,7 +586,7 @@ server <- function(input, output) {
       data <- readxl::read_excel('C:\\Users\\Desktop\\data.xlsx')
       
       # Run Sentiment Analysis
-      data_results <- apply(data, function(text) {llm_prompt(text = text, type = 'sentiment_multiple')})
+      data_results <- apply(data, function(text) {llm_prompt(text = text, type = 'hate_speech_multiple')})
       
       # Note: Implementation llm_prompt function
       
@@ -606,17 +611,490 @@ server <- function(input, output) {
       }      
       
       "
+    } 
+    else if (input$scale_type == "offensive_lang_single") {
+      code_template <- "
+      # Example code for Offensive Language Detection Analysis on Large Dataset
+    
+      library(gemini.R)
+      library(dplyr)
       
+      # Import Analysis Function
+      source('llm_prompt_function.R')
       
+      # Write & Set GEMINI API
+      api_key <- 'WRITE API GEMINI KEY'
+
+      setAPI(api_key)
       
-    } else if (is.null(input$scale_type)) {
-      code_template <- ""
+      # Import dataset 
+      data <- readxl::read_excel('C:\\Users\\Desktop\\data.xlsx')
       
-    } else if (is.null(input$scale_type)) {
-      code_template <- ""
+      # Run Sentiment Analysis
+      data_results <- apply(data, function(text) {llm_prompt(text = text, type = 'offensive_lang_single')})
+      
+      # Note: Implementation llm_prompt function
+      
+      llm_prompt <- function(text) {
+      
+        # Define the prompt based on the type of task
+        prompt <- switch(type,
+                         offensive_lang_single = paste('Detect the most predominant Offensive Language 
+                                                levels from the following political. Provide the answer 
+                                                with the option is_offensive or non_offensive Only provide 
+                                                the main option as an answer: ', text)
+            )
+        
+        # Call the Gemini model with the generated prompt
+        tryCatch({
+          answer <- gemini(prompt) # Assuming 'gemini' is a valid function to call the API
+          return(answer)
+        }, error = function(e) {
+          return('Sorry, I can't answer your question at the moment.')
+        })
+      }   
+      
+      "
+      
+    } 
+    else if (input$scale_type == "offensive_lang_multiple") {
+      code_template <- "
+            # Example code for Offensive Language Detection Analysis on Large Dataset
+    
+      library(gemini.R)
+      library(dplyr)
+      
+      # Import Analysis Function
+      source('llm_prompt_function.R')
+      
+      # Write & Set GEMINI API
+      api_key <- 'WRITE API GEMINI KEY'
+
+      setAPI(api_key)
+      
+      # Import dataset 
+      data <- readxl::read_excel('C:\\Users\\Desktop\\data.xlsx')
+      
+      # Run Sentiment Analysis
+      data_results <- apply(data, function(text) {llm_prompt(text = text, type = 'offensive_lang_multiple')})
+      
+      # Note: Implementation llm_prompt function
+      
+      llm_prompt <- function(text) {
+      
+        # Define the prompt based on the type of task
+        prompt <- switch(type,
+                         offensive_lang_multiple = paste('Detect the Offensive Language levels 
+                         of the following political text. Provide the answer with the option 
+                         is_offensive and non_offensive and its proportion as percentage in the 
+                         text. Only provide as an answer each option and its proportion as percentage 
+                         in the text: ', text)
+            )
+        
+        # Call the Gemini model with the generated prompt
+        tryCatch({
+          answer <- gemini(prompt) # Assuming 'gemini' is a valid function to call the API
+          return(answer)
+        }, error = function(e) {
+          return('Sorry, I can't answer your question at the moment.')
+        })
+      }   
+      "
+      
+    } 
+    else if (input$scale_type == "emotion_single") {
+      code_template <- "
+      # Example code for Single Emotion Detection Analysis on Large Dataset
+    
+      library(gemini.R)
+      library(dplyr)
+      
+      # Import Analysis Function
+      source('llm_prompt_function.R')
+      
+      # Write & Set GEMINI API
+      api_key <- 'WRITE API GEMINI KEY'
+
+      setAPI(api_key)
+      
+      # Import dataset 
+      data <- readxl::read_excel('C:\\Users\\Desktop\\data.xlsx')
+      
+      # Run Sentiment Analysis
+      data_results <- apply(data, function(text) {llm_prompt(text = text, type = 'emotion_single')})
+      
+      # Note: Implementation llm_prompt function
+      
+      llm_prompt <- function(text) {
+      
+        # Define the prompt based on the type of task
+        prompt <- switch(type,
+                         emotion_single = paste('Detect the most predominant emotion of the 
+                         following political text in one of the following options anticipation, 
+                         disgust, fear, joy, love, optimism, pessimism, sadness, surprise or trust.
+                         Only provide the main emotion as an answer: ', text)
+            )
+        
+        # Call the Gemini model with the generated prompt
+        tryCatch({
+          answer <- gemini(prompt) # Assuming 'gemini' is a valid function to call the API
+          return(answer)
+        }, error = function(e) {
+          return('Sorry, I can't answer your question at the moment.')
+        })
+      }   
+      "
+      
+    } 
+    else if (input$scale_type == "emotion_multiple") {
+      code_template <- "
+      # Example code for Multiple Emotion Detection Analysis on Large Dataset
+    
+      library(gemini.R)
+      library(dplyr)
+      
+      # Import Analysis Function
+      source('llm_prompt_function.R')
+      
+      # Write & Set GEMINI API
+      api_key <- 'WRITE API GEMINI KEY'
+
+      setAPI(api_key)
+      
+      # Import dataset 
+      data <- readxl::read_excel('C:\\Users\\Desktop\\data.xlsx')
+      
+      # Run Sentiment Analysis
+      data_results <- apply(data, function(text) {llm_prompt(text = text, type = 'emotion_single')})
+      
+      # Note: Implementation llm_prompt function
+      
+      llm_prompt <- function(text) {
+      
+        # Define the prompt based on the type of task
+        prompt <- switch(type,
+                         emotion_single = paste('Detect the most predominant emotion of the 
+                         following political text in one of the following options anticipation, 
+                         disgust, fear, joy, love, optimism, pessimism, sadness, surprise or trust.
+                         Only provide the main emotion as an answer: ', text)
+            )
+        
+        # Call the Gemini model with the generated prompt
+        tryCatch({
+          answer <- gemini(prompt) # Assuming 'gemini' is a valid function to call the API
+          return(answer)
+        }, error = function(e) {
+          return('Sorry, I can't answer your question at the moment.')
+        })
+      }        
+      "
+      
+    } 
+    else if (input$scale_type == "topic_top") {
+      code_template <- "
+      # Example code for Single Topic (The most predominant) Detection Analysis on Large Dataset
+    
+      library(gemini.R)
+      library(dplyr)
+      
+      # Import Analysis Function
+      source('llm_prompt_function.R')
+      
+      # Write & Set GEMINI API
+      api_key <- 'WRITE API GEMINI KEY'
+
+      setAPI(api_key)
+      
+      # Import dataset 
+      data <- readxl::read_excel('C:\\Users\\Desktop\\data.xlsx')
+      
+      # Run Sentiment Analysis
+      data_results <- apply(data, function(text) {llm_prompt(text = text, type = 'topic_top')})
+      
+      # Note: Implementation llm_prompt function
+      
+      llm_prompt <- function(text) {
+      
+        # Define the prompt based on the type of task
+        prompt <- switch(type,
+                         topic_top = paste('Detect the most predominant topic from the following 
+                         political text. Only provide as an answer the name of the topic. Please do
+                         not provide description about the topic: ', text)
+            )
+        
+        # Call the Gemini model with the generated prompt
+        tryCatch({
+          answer <- gemini(prompt) # Assuming 'gemini' is a valid function to call the API
+          return(answer)
+        }, error = function(e) {
+          return('Sorry, I can't answer your question at the moment.')
+        })
+      }        
+      "
+      
+    } 
+    else if (input$scale_type == "topic_multiple") {
+      code_template <- "
+      # Example code for Multiple Topic Detection Analysis on Large Dataset
+    
+      library(gemini.R)
+      library(dplyr)
+      
+      # Import Analysis Function
+      source('llm_prompt_function.R')
+      
+      # Write & Set GEMINI API
+      api_key <- 'WRITE API GEMINI KEY'
+
+      setAPI(api_key)
+      
+      # Import dataset 
+      data <- readxl::read_excel('C:\\Users\\Desktop\\data.xlsx')
+      
+      # Run Sentiment Analysis
+      data_results <- apply(data, function(text) {llm_prompt(text = text, type = 'topic_multiple', num_topics = <WRITE HERE THE NUMBER OF TOPICS>)})
+      
+      # Note: Implementation llm_prompt function
+      
+      llm_prompt <- function(text) {
+      
+        # Define the prompt based on the type of task
+        prompt <- switch(type,
+                         topic_multiple = paste('Detect the most predominant', 
+                         num_topics, 'topics from the following political text. 
+                         Only provide as an answer the name of each topic and its proportion as 
+                         percentage in the text. Please do not provide description about the topic: ', text)
+            )
+        
+        # Call the Gemini model with the generated prompt
+        tryCatch({
+          answer <- gemini(prompt) # Assuming 'gemini' is a valid function to call the API
+          return(answer)
+        }, error = function(e) {
+          return('Sorry, I can't answer your question at the moment.')
+        })
+      }        
+      "
+      
+    } 
+    else if (input$scale_type == "topic_custom") {
+      code_template <- "
+      # Example code for Multiple Topic Detection Analysis on Large Dataset
+    
+      library(gemini.R)
+      library(dplyr)
+      
+      # Import Analysis Function
+      source('llm_prompt_function.R')
+      
+      # Write & Set GEMINI API
+      api_key <- 'WRITE API GEMINI KEY'
+
+      setAPI(api_key)
+      
+      # Import dataset 
+      data <- readxl::read_excel('C:\\Users\\Desktop\\data.xlsx')
+      
+      # Run Sentiment Analysis
+      data_results <- apply(data, function(text) {llm_prompt(text = text, type = 'topic_custom', topic_list = <WRITE HERE THE TOPIC NAMES>)})
+      
+      # Note: Implementation llm_prompt function
+      
+      llm_prompt <- function(text) {
+      
+        # Define the prompt based on the type of task
+        prompt <- switch(type,
+                         topic_custom = paste('Detect the most predominant topics from the following 
+                         political text. Use the following topics to identify them in the text ', 
+                         topic_list, '. Only provide as an answer the name of each 
+                         topic and its proportion as percentage in the text. Please do not provide 
+                         description about the topic: ', text)
+            )
+        
+        # Call the Gemini model with the generated prompt
+        tryCatch({
+          answer <- gemini(prompt) # Assuming 'gemini' is a valid function to call the API
+          return(answer)
+        }, error = function(e) {
+          return('Sorry, I can't answer your question at the moment.')
+        })
+      }        
+      "
+      
+    } 
+    else if (input$scale_type == "keyword_single") {
+      code_template <- "
+      # Example code for Single Keyword Detection Analysis on Large Dataset
+    
+      library(gemini.R)
+      library(dplyr)
+      
+      # Import Analysis Function
+      source('llm_prompt_function.R')
+      
+      # Write & Set GEMINI API
+      api_key <- 'WRITE API GEMINI KEY'
+
+      setAPI(api_key)
+      
+      # Import dataset 
+      data <- readxl::read_excel('C:\\Users\\Desktop\\data.xlsx')
+      
+      # Run Sentiment Analysis
+      data_results <- apply(data, function(text) {llm_prompt(text = text, type = 'keyword_single')})
+      
+      # Note: Implementation llm_prompt function
+      
+      llm_prompt <- function(text) {
+      
+        # Define the prompt based on the type of task
+        prompt <- switch(type,
+                         keyword_single = paste('Detect the most predominant keyword from the following 
+                         political text. Only provide as an answer the name of the keyword: ', text)
+            )
+        
+        # Call the Gemini model with the generated prompt
+        tryCatch({
+          answer <- gemini(prompt) # Assuming 'gemini' is a valid function to call the API
+          return(answer)
+        }, error = function(e) {
+          return('Sorry, I can't answer your question at the moment.')
+        })
+      }        
+      "
+      
+    } 
+    else if (input$scale_type == "keyword_multiple") {
+      code_template <- "
+      # Example code for Multiple Keyword Detection Analysis on Large Dataset
+    
+      library(gemini.R)
+      library(dplyr)
+      
+      # Import Analysis Function
+      source('llm_prompt_function.R')
+      
+      # Write & Set GEMINI API
+      api_key <- 'WRITE API GEMINI KEY'
+
+      setAPI(api_key)
+      
+      # Import dataset 
+      data <- readxl::read_excel('C:\\Users\\Desktop\\data.xlsx')
+      
+      # Run Sentiment Analysis
+      data_results <- apply(data, function(text) {llm_prompt(text = text, type = 'keyword_multiple', num_keywords = <WRITE HERE THE NUMBER OF KEYWORDS>)})
+      
+      # Note: Implementation llm_prompt function
+      
+      llm_prompt <- function(text) {
+      
+        # Define the prompt based on the type of task
+        prompt <- switch(type,
+                         keyword_multiple = paste('Detect the most predominant', 
+                         num_keywords, 'keyword(s) from the  
+                         following political text. Only provide as an answer the name 
+                         of each keyword. Please do not provide description about the keyword: ', text)
+            )
+        
+        # Call the Gemini model with the generated prompt
+        tryCatch({
+          answer <- gemini(prompt) # Assuming 'gemini' is a valid function to call the API
+          return(answer)
+        }, error = function(e) {
+          return('Sorry, I can't answer your question at the moment.')
+        })
+      }        
+      "
+      
+    } 
+    else if (input$scale_type == "entities") {
+      code_template <- "
+      # Example code for Entities Detection Analysis on Large Dataset
+    
+      library(gemini.R)
+      library(dplyr)
+      
+      # Import Analysis Function
+      source('llm_prompt_function.R')
+      
+      # Write & Set GEMINI API
+      api_key <- 'WRITE API GEMINI KEY'
+
+      setAPI(api_key)
+      
+      # Import dataset 
+      data <- readxl::read_excel('C:\\Users\\Desktop\\data.xlsx')
+      
+      # Run Sentiment Analysis
+      data_results <- apply(data, function(text) {llm_prompt(text = text, type = 'entities')})
+      
+      # Note: Implementation llm_prompt function
+      
+      llm_prompt <- function(text) {
+      
+        # Define the prompt based on the type of task
+        prompt <- switch(type,
+                         entities = paste('Detect, extract and list any key entities 
+                         (e.g., people, organizations, locations) mentioned in the 
+                         following political text. Only provide as an answer the name of 
+                         each entities and its entity name: ', text)
+            )
+        
+        # Call the Gemini model with the generated prompt
+        tryCatch({
+          answer <- gemini(prompt) # Assuming 'gemini' is a valid function to call the API
+          return(answer)
+        }, error = function(e) {
+          return('Sorry, I can't answer your question at the moment.')
+        })
+      }        
+      "
+      
+    }  
+    else if (input$scale_type == "question_task") {
+      code_template <- "
+      # Example code for Question-Chat Analysis on Large Dataset
+    
+      library(gemini.R)
+      library(dplyr)
+      
+      # Import Analysis Function
+      source('llm_prompt_function.R')
+      
+      # Write & Set GEMINI API
+      api_key <- 'WRITE API GEMINI KEY'
+
+      setAPI(api_key)
+      
+      # Import dataset 
+      data <- readxl::read_excel('C:\\Users\\Desktop\\data.xlsx')
+      
+      # Run Sentiment Analysis
+      data_results <- apply(data, function(text) {llm_prompt(text = text, type = 'question_task', question = <WRITE HERE YOUR QUESTION>)})
+      
+      # Note: Implementation llm_prompt function
+      
+      llm_prompt <- function(text) {
+      
+        # Define the prompt based on the type of task
+        prompt <- switch(type,
+                         question_task = paste('You are a social scientist working on a research 
+                         project on political science and communication. Here is a political text 
+                         for your analysis: ', text, '. Your task is: ', question)
+            )
+        
+        # Call the Gemini model with the generated prompt
+        tryCatch({
+          answer <- gemini(prompt) # Assuming 'gemini' is a valid function to call the API
+          return(answer)
+        }, error = function(e) {
+          return('Sorry, I can't answer your question at the moment.')
+        })
+      }        
+      "
       
     }
-    
     
     output$scale_code <- renderUI({
       # Wrap the code in <code> and <pre> tags for Prism.js to highlight
