@@ -235,7 +235,15 @@ ui <- navbarPage(
         HTML("</code></pre>")
                    )
         
-                 )
+                 ),
+              card(                   
+                card_header(
+                class = "bg-primary",
+                "News Data Sample"), uiOutput("show_data")),
+              card(
+                card_header(
+                  class = "bg-primary",
+                  "Analysis Results"), uiOutput("show_data_result"))
                )
              )
            )
@@ -1091,6 +1099,146 @@ server <- function(input, output) {
     })
   })
   
+  # Reactive expression to read data
+  data <- reactive({
+    
+    readxl::read_excel("test_data.xlsx")
+    
+  })
+  
+  observeEvent(input$load_data, {
+    
+    output$data <- DT::renderDataTable({
+      DT::datatable(
+        data(),
+        style = 'bootstrap',
+        rownames = FALSE,
+        extensions = c('Buttons', 'FixedHeader', 'KeyTable', 'Scroller'),
+        plugins = 'natural',
+        options = list(
+          deferRender = TRUE,
+          scrollY = 300,
+          scrollX = TRUE,
+          autoWidth = TRUE,
+          dom = 'Bfrtip',
+          pageLength = 3,
+          buttons = list(
+            list(
+              extend = "collection",
+              buttons = c('csv', 'excel', 'pdf'),
+              text = "Download Current Page",
+              filename = "page",
+              exportOptions = list(
+                modifier = list(page = "current")
+              )
+            ),
+            list(
+              extend = "collection",
+              buttons = c('csv', 'excel', 'pdf'),
+              text = "Download Full Results",
+              filename = "data",
+              exportOptions = list(
+                modifier = list(page = "all")
+              )
+            ))
+        ))
+    })
+    
+    output$show_data <- renderUI({
+      
+      fluidRow(
+        column(1),
+        column(10, 
+               div(
+                 h5("Data Uploaded:"),
+                 hr(),
+                 DT::dataTableOutput("data") |> shinycssloaders::withSpinner(color="#0dc5c1", type = 5)
+               )),
+        column(1)
+      )
+    })
+    
+  })
+  
+  # Reactive expression to run analysis based on user input
+  observeEvent(input$run_analysis, {
+    
+    # Get the data from the reactive expression
+    df <- data()
+    
+    # Set up the parameters based on the selected analysis type
+    analysis_type <- input$scale_type_sample
+    question <- if (analysis_type == "question_task") input$question else NULL
+    num_topics <- if (analysis_type == "topic_multiple") input$num_topics else NULL
+    num_keywords <- if (analysis_type == "keyword_multiple") input$num_keywords else NULL
+    topic_list <- if (analysis_type == "topic_custom") unlist(strsplit(input$topic_list, ",")) else NULL
+    
+    # Run llm_prompt on each row in the 'snippet' column and store the results
+    df$Result <- sapply(df$Snippet, function(content) {
+      llm_prompt(
+        text = content,
+        question = question,
+        type = analysis_type,
+        num_topics = num_topics,
+        num_keywords = num_keywords,
+        topic_list = topic_list
+      )
+    })
+    
+    # Render the result as a table output
+    output$data_results <- DT::renderDataTable({
+      DT::datatable(
+        df,
+        style = 'bootstrap',
+        rownames = FALSE,
+        extensions = c('Buttons', 'FixedHeader', 'KeyTable', 'Scroller'),
+        plugins = 'natural',
+        options = list(
+          deferRender = TRUE,
+          scrollY = 300,
+          scrollX = TRUE,
+          autoWidth = TRUE,
+          dom = 'Bfrtip',
+          pageLength = 3,
+          buttons = list(
+            list(
+              extend = "collection",
+              buttons = c('csv', 'excel', 'pdf'),
+              text = "Download Current Page",
+              filename = "page",
+              exportOptions = list(
+                modifier = list(page = "current")
+              )
+            ),
+            list(
+              extend = "collection",
+              buttons = c('csv', 'excel', 'pdf'),
+              text = "Download Full Results",
+              filename = "data",
+              exportOptions = list(
+                modifier = list(page = "all")
+              )
+            ))
+        ))
+    })
+    
+    output$show_data_result <- renderUI({
+      
+      fluidRow(
+        column(1),
+        column(10, 
+               div(
+                 h5("Data Uploaded:"),
+                 hr(),
+                 DT::dataTableOutput("data_results") |> shinycssloaders::withSpinner(color="#0dc5c1", type = 5)
+               )),
+        column(1)
+      )
+    })
+    
+    
+    
+  })
   
   # Save settings in the Settings tab
   observeEvent(input$save_settings, {

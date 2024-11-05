@@ -208,8 +208,68 @@ ui <- navbarPage(
                        "Custom Task" = "question_task"
                      )
                    )),
+
+                   br(),
+                   actionButton("generate_code", "Generate Code"),
+                   br(),
+                   h6(strong("Try this example of news articles:")),
+                   actionButton("load_data", "Show Data Sample"),
+                   br(),
+                   # Analysis type selector for scaling up
+                   selectInput("scale_type_sample", "Select Analysis Type:", choices = list(
+                     "Sentiment Analysis" = list(
+                       "Sentiment Single" = "sentiment_single",
+                       "Sentiment Multiple" = "sentiment_multiple"
+                     ),
+                     "Irony Detection" = list(
+                       "Irony Single" = "irony_single",
+                       "Irony Multiple" = "irony_multiple"
+                     ),
+                     "Content Moderation" = list(
+                       "Hate Speech Single" = "hate_speech_single",
+                       "Hate Speech Multiple" = "hate_speech_multiple",
+                       "Offensive Language Single" = "offensive_lang_single",
+                       "Offensive Language Multiple" = "offensive_lang_multiple"
+                     ),
+                     "Emotion Analysis" = list(
+                       "Emotion Single" = "emotion_single",
+                       "Emotion Multiple" = "emotion_multiple"
+                     ),
+                     "Topic Analysis" = list(
+                       "Topic Top" = "topic_top",
+                       "Topic Multiple" = "topic_multiple",
+                       "Topic Custom" = "topic_custom"
+                     ),
+                     "Keyword Analysis" = list(
+                       "Keyword Single" = "keyword_single",
+                       "Keyword Multiple" = "keyword_multiple"
+                     ),
+                     "Other" = list(
+                       "Entities" = "entities",
+                       "Custom Task" = "question_task"
+                     )
+                   )),
+                   conditionalPanel(
+                     condition = "input.scale_type_sample == 'topic_multiple'",
+                     numericInput("num_topics", "Number of Topics:", min = 1, value = 3)
+                   ),
+                   conditionalPanel(
+                     condition = "input.scale_type_sample == 'keyword_multiple'",
+                     numericInput("num_keywords", "Number of Keywords:", min = 1, value = 3)
+                   ),
+                   conditionalPanel(
+                     condition = "input.scale_type_sample == 'topic_custom'",
+                     textInput("topic_list", "Enter Topics (comma-separated):")
+                   ),
+                   conditionalPanel(
+                     condition = "input.scale_type_sample == 'NULL'",
+                     textInput("question", "Custom Task Question:")
+                   ),
+
+                   br(),
+                   actionButton("run_analysis", "Run Analysis")
                    
-                   actionButton("generate_code", "Generate Code")
+                   
                  )
                ),
                
@@ -229,7 +289,10 @@ ui <- navbarPage(
         HTML("</code></pre>")
                    )
         
-                 )
+                 ),
+                 card(uiOutput("show_data")),
+                  card(uiOutput("show_data_result"))
+        
                )
              )
            )
@@ -1083,6 +1146,147 @@ server <- function(input, output) {
       # Wrap the code in <code> and <pre> tags for Prism.js to highlight
       HTML(paste0("<code class='language-javascript'>", code_template, "</code>"))
     })
+  })
+  
+  # Reactive expression to read data
+  data <- reactive({
+
+    readxl::read_excel("test_data.xlsx")
+    
+  })
+  
+  observeEvent(input$load_data, {
+    
+    output$data <- DT::renderDataTable({
+      DT::datatable(
+        data(),
+        style = 'bootstrap',
+        rownames = FALSE,
+        extensions = c('Buttons', 'FixedHeader', 'KeyTable', 'Scroller'),
+        plugins = 'natural',
+        options = list(
+          deferRender = TRUE,
+          scrollY = 300,
+          scrollX = TRUE,
+          autoWidth = TRUE,
+          dom = 'Bfrtip',
+          pageLength = 3,
+          buttons = list(
+            list(
+              extend = "collection",
+              buttons = c('csv', 'excel', 'pdf'),
+              text = "Download Current Page",
+              filename = "page",
+              exportOptions = list(
+                modifier = list(page = "current")
+              )
+            ),
+            list(
+              extend = "collection",
+              buttons = c('csv', 'excel', 'pdf'),
+              text = "Download Full Results",
+              filename = "data",
+              exportOptions = list(
+                modifier = list(page = "all")
+              )
+            ))
+        ))
+    })
+    
+    output$show_data <- renderUI({
+      
+      fluidRow(
+        column(1),
+        column(10, 
+               div(
+                 h5("Data Uploaded:"),
+                 hr(),
+                 DT::dataTableOutput("data") |> shinycssloaders::withSpinner(color="#0dc5c1", type = 5)
+               )),
+        column(1)
+      )
+    })
+    
+  })
+  
+  # Reactive expression to run analysis based on user input
+  observeEvent(input$run_analysis, {
+    
+    # Get the data from the reactive expression
+    df <- data()
+    
+    # Set up the parameters based on the selected analysis type
+    analysis_type <- input$scale_type_sample
+    question <- if (analysis_type == "question_task") input$question else NULL
+    num_topics <- if (analysis_type == "topic_multiple") input$num_topics else NULL
+    num_keywords <- if (analysis_type == "keyword_multiple") input$num_keywords else NULL
+    topic_list <- if (analysis_type == "topic_custom") unlist(strsplit(input$topic_list, ",")) else NULL
+    
+    # Run llm_prompt on each row in the 'snippet' column and store the results
+    df$Result <- sapply(df$Snippet, function(content) {
+      llm_prompt(
+        text = content,
+        question = question,
+        type = analysis_type,
+        num_topics = num_topics,
+        num_keywords = num_keywords,
+        topic_list = topic_list
+      )
+    })
+    
+    # Render the result as a table output
+    output$data_results <- DT::renderDataTable({
+      DT::datatable(
+        df,
+        style = 'bootstrap',
+        rownames = FALSE,
+        extensions = c('Buttons', 'FixedHeader', 'KeyTable', 'Scroller'),
+        plugins = 'natural',
+        options = list(
+          deferRender = TRUE,
+          scrollY = 300,
+          scrollX = TRUE,
+          autoWidth = TRUE,
+          dom = 'Bfrtip',
+          pageLength = 3,
+          buttons = list(
+            list(
+              extend = "collection",
+              buttons = c('csv', 'excel', 'pdf'),
+              text = "Download Current Page",
+              filename = "page",
+              exportOptions = list(
+                modifier = list(page = "current")
+              )
+            ),
+            list(
+              extend = "collection",
+              buttons = c('csv', 'excel', 'pdf'),
+              text = "Download Full Results",
+              filename = "data",
+              exportOptions = list(
+                modifier = list(page = "all")
+              )
+            ))
+        ))
+    })
+    
+    output$show_data_result <- renderUI({
+      
+      fluidRow(
+        column(1),
+        column(10, 
+               div(
+                 h5("Data Uploaded:"),
+                 hr(),
+                 DT::dataTableOutput("data_results") |> shinycssloaders::withSpinner(color="#0dc5c1", type = 5)
+               )),
+        column(1)
+      )
+    })
+    
+    
+    
   })
   
   
