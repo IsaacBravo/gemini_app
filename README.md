@@ -45,7 +45,21 @@ install.packages(c("shiny", "gemini.R", "bslib", "fontawesome"))
 setAPI("YOUR_KEY")
 ```
 
+## Citation
 
+Please cite TextAnalyzer if you use it for your publications:
+
+      Isaac Bravo (2024). Gemini in R: A Shiny Application for Automatic Image and Text Analysis using Gemini API
+      https://github.com/IsaacBravo/gemini_app
+
+A BibTeX entry for LaTeX users is:
+
+      @Manual{,
+        title = {TextAnalyzer: Gemini in R: A Shiny Application for Automatic Image and Text Analysis using Gemini API},
+        author = {Isaac Bravo},
+        year = {2024},
+        url = {https://github.com/IsaacBravo/gemini_app},
+      }
 
 
 
